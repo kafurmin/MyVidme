@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/card_view"
+    android:layout_width="match_parent"
+    android:layout_height="210dp"
+    card_view:cardCornerRadius="4dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="210dp"
+        android:padding="5dp">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="170dp"
+        android:id="@+id/thumb_view"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:id="@+id/Videoname_textView"
+        android:text="NameofVideo"
+        android:layout_below="@id/thumb_view"
+        android:layout_marginTop="4dp"
+        android:maxLength="30">
+    </TextView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/like_textview"
+        android:text="Likes"
+        android:textColor="#363535"
+        android:layout_marginLeft="10dp"
+        android:layout_alignRight="@id/thumb_view"
+        android:layout_below="@id/thumb_view"
+        android:layout_marginTop="4dp" />
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>
