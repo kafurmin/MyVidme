@@ -31,11 +31,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Uri image_uri = Uri.parse(call.get(position).getThumbnail_url());
+        Uri image_uri = Uri.parse(call.get(position).getThumbnailUrl());
         Context context = holder.thumbview.getContext();
         Picasso.with(context).load(image_uri).into(holder.thumbview);
         holder.videoName.setText(call.get(position).getTitle());
-        holder.videoLikeCount.setText("Likes :"+String.valueOf(call.get(position).getLikes_count()));
+        holder.videoLikeCount.setText("Likes :"+String.valueOf(call.get(position).getLikesCount()));
     }
 
     @Override

@@ -21,7 +21,7 @@ import com.example.kif.myvidme.api.VidmeApi;
 import com.example.kif.myvidme.model.Video;
 import com.example.kif.myvidme.model.Videos;
 import com.example.kif.myvidme.screen.adapter.RecyclerViewAdapter;
-import com.example.kif.myvidme.screen.activity.Videoplayer;
+import com.example.kif.myvidme.screen.activity.PlayerActivity;
 
 import java.io.IOException;
 import java.util.List;
@@ -35,7 +35,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class FeaturedFragment extends Fragment {
     public RecyclerViewAdapter featuredVideosAdapter;
-    public static final String ROOT_URL = "https://api.vid.me/";
     public List<Video> videos;
     public RecyclerView featuredVideoList;
     public SwipeRefreshLayout swipeRefreshLayout;
@@ -94,7 +93,9 @@ public class FeaturedFragment extends Fragment {
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(BuildConfig.API_ENDPOINT)
                 .build();
+
         final VidmeApi videoApi = retrofitAdapter.create(VidmeApi.class);
+
         Call<Videos> call = videoApi.getFeaturedVideo();
         call.enqueue(new Callback<Videos>() {
             @Override
@@ -104,8 +105,8 @@ public class FeaturedFragment extends Fragment {
 featuredVideosAdapter.SetOnItemClickListener(new OnItemClickListener() {
     @Override
     public void onItemClick(View view, int position) {
-        String video_url = response.body().videos.get(position).getComplete_url();
-        Intent intent = new Intent(getActivity(),Videoplayer.class);
+        String video_url = response.body().videos.get(position).getFullUrl();
+        Intent intent = new Intent(getActivity(),PlayerActivity.class);
         intent.putExtra("video_url",video_url);
         startActivity(intent);
     }

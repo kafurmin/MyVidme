@@ -2,10 +2,10 @@ package com.example.kif.myvidme.screen.fragment;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,14 +16,14 @@ import android.widget.LinearLayout;
 
 import com.example.kif.myvidme.BuildConfig;
 import com.example.kif.myvidme.R;
-import com.example.kif.myvidme.api.Response;
+import com.example.kif.myvidme.model.Response;
 import com.example.kif.myvidme.api.VidmeApi;
-import com.example.kif.myvidme.screen.activity.UserVideos;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
 
 
 public class SignInFragment extends Fragment {
@@ -41,12 +41,12 @@ public class SignInFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_signin, container, false);
 
-        username = (EditText) rootView.findViewById(R.id.user_name_field);
-        password = (EditText) rootView.findViewById(R.id.password_field);
+        username =  rootView.findViewById(R.id.user_name_field);
+        password =  rootView.findViewById(R.id.password_field);
         LinearLayout linearLayout = (LinearLayout)rootView.findViewById(R.id.my_button);
-        SharedPreferences UsernameAndPasswordValues = getActivity().getSharedPreferences("Pref",Context.MODE_PRIVATE);
-        inSharedPreferenceUsername = UsernameAndPasswordValues.getString("username",null);
-        inSharedPreferencePassword = UsernameAndPasswordValues.getString("password",null);
+        SharedPreferences auth = getActivity().getSharedPreferences("Pref",Context.MODE_PRIVATE);
+        inSharedPreferenceUsername = auth.getString("username",null);
+        inSharedPreferencePassword = auth.getString("password",null);
 
         if(inSharedPreferenceUsername!=null & inSharedPreferencePassword!=null){
             SignIn();
@@ -68,7 +68,7 @@ public class SignInFragment extends Fragment {
                 .baseUrl(BuildConfig.API_ENDPOINT)
                 .build();
 
-        final VidmeApi videoApi = retrofitAdapter.create(VidmeApi.class);
+        final VidmeApi vidmeApi = retrofitAdapter.create(VidmeApi.class);
 
          usernameValue = username.getText().toString();
          passwordValue = password.getText().toString();
@@ -79,10 +79,10 @@ public class SignInFragment extends Fragment {
         Log.d("Shared preference", sharedPreferencesUsername + sharedPreferencesPassword);
 
         if(sharedPreferencesUsername ==null || sharedPreferencesPassword ==null) {
-            call = videoApi.insertUser(usernameValue, passwordValue);
+            call = vidmeApi.authCreate(usernameValue, passwordValue);
         }
         else{
-            call = videoApi.insertUser(sharedPreferencesUsername, sharedPreferencesPassword);
+            call = vidmeApi.authCreate(sharedPreferencesUsername, sharedPreferencesPassword);
         }
         call.enqueue(new Callback<Response>() {
             @Override
@@ -97,14 +97,20 @@ public class SignInFragment extends Fragment {
                 }
                 else {
                     if (response.body().getStatus()) {
-                        SharedPreferences successfulConnectionValues = getActivity().getSharedPreferences("Pref",Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = successfulConnectionValues.edit();
+                        SharedPreferences sharedPreferences1 = getActivity().getSharedPreferences("Pref",Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences1.edit();
                         editor.putString("token", response.body().getAuth().getToken());
                         editor.putString("username", usernameValue);
                         editor.putString("password", passwordValue);
                         editor.commit();
-                        Intent user_activity_intent = new Intent(getActivity(), UserVideos.class);
-                        startActivity(user_activity_intent);
+
+                        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                        FeedFragment feedFragment = new FeedFragment();
+                        fragmentTransaction.replace(R.id.signin_root,feedFragment);
+                        fragmentTransaction.commit();
+/*
+                        Intent feed_intent = new Intent(getActivity(), Feed.class);
+                        startActivity(feed_intent);*/
                     }
                 }
             }

@@ -1,10 +1,11 @@
 package com.example.kif.myvidme.screen.fragment;
 
-import android.app.Fragment;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,7 +24,7 @@ import com.example.kif.myvidme.model.Video;
 import com.example.kif.myvidme.model.Videos;
 import com.example.kif.myvidme.screen.activity.MainActivity;
 import com.example.kif.myvidme.screen.adapter.RecyclerViewAdapter;
-import com.example.kif.myvidme.screen.activity.Videoplayer;
+import com.example.kif.myvidme.screen.activity.PlayerActivity;
 
 import java.io.IOException;
 import java.util.List;
@@ -34,7 +35,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class FeedFragment extends Fragment{
+
+public class FeedFragment extends Fragment {
     public RecyclerViewAdapter userVideosAdapter;
     public List<Video> videos;
     public RecyclerView userVideosList;
@@ -96,7 +98,7 @@ public class FeedFragment extends Fragment{
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("Pref",Context.MODE_PRIVATE);
         String token = sharedPreferences.getString("token",null);
         Log.d("token in user videos",token);
-        Call<Videos> call = videoApi.getFollowingVideo(token);
+        Call<Videos> call = videoApi.getFeedVideo(token);
         call.enqueue(new Callback<Videos>() {
             @Override
             public void onResponse(Call<Videos> call, final Response<Videos> response) {
@@ -107,8 +109,8 @@ public class FeedFragment extends Fragment{
                 userVideosAdapter.SetOnItemClickListener(new OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        String video_url = response.body().videos.get(position).getComplete_url();
-                        Intent intent = new Intent(getActivity(),Videoplayer.class);
+                        String video_url = response.body().videos.get(position).getFullUrl();
+                        Intent intent = new Intent(getActivity(),PlayerActivity.class);
                         intent.putExtra("video_url",video_url);
                         startActivity(intent);
                     }

@@ -23,6 +23,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
             case 1:
                 return new NewFragment();
             case 2:
+
                 return new SignInFragment();
         }
          return null;

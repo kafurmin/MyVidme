@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.example.kif.myvidme.R;
 import com.example.kif.myvidme.screen.fragment.FeedFragment;
 
-public class UserVideos extends AppCompatActivity {
+public class Feed extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,7 +16,7 @@ public class UserVideos extends AppCompatActivity {
 
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         FeedFragment fragment_user_videos = new FeedFragment();
-        fragmentTransaction.add(R.id.user_videos_container,fragment_user_videos);
+        //fragmentTransaction.add(R.id.user_videos_container,fragment_user_videos);
         fragmentTransaction.commit();
         }
 

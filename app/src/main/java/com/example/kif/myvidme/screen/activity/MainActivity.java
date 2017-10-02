@@ -7,7 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
+import android.widget.Toast;
 
+import com.example.kif.myvidme.InternetConnectivityUtil;
 import com.example.kif.myvidme.R;
 import com.example.kif.myvidme.screen.adapter.SectionsPagerAdapter;
 
@@ -15,11 +17,13 @@ public class MainActivity extends AppCompatActivity {
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
+    public boolean isAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
@@ -31,7 +35,8 @@ public class MainActivity extends AppCompatActivity {
         //assert tabLayout != null;
         tabLayout.setupWithViewPager(mViewPager);
 
-
+        if (!InternetConnectivityUtil.isConnected(this))
+            Toast.makeText(this, "Please check your internet connection", Toast.LENGTH_SHORT).show();
     }
 
 

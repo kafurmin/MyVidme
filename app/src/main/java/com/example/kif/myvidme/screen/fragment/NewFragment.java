@@ -11,12 +11,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.kif.myvidme.BuildConfig;
 import com.example.kif.myvidme.R;
 import com.example.kif.myvidme.api.VidmeApi;
 import com.example.kif.myvidme.model.Video;
 import com.example.kif.myvidme.model.Videos;
 import com.example.kif.myvidme.screen.adapter.RecyclerViewAdapter;
-import com.example.kif.myvidme.screen.activity.Videoplayer;
+import com.example.kif.myvidme.screen.activity.PlayerActivity;
 
 import java.io.IOException;
 import java.util.List;
@@ -30,7 +31,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class NewFragment extends Fragment {
     public RecyclerViewAdapter newVideosAdapter;
-    public static final String ROOT_URL = "https://api.vid.me/";
     public List<Video> videos;
     public SwipeRefreshLayout refreshNew;
     public RecyclerView newVideosList;
@@ -78,7 +78,7 @@ public class NewFragment extends Fragment {
     private void getVideos() throws IOException {
         Retrofit retrofitAdapter = new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
-                .baseUrl(ROOT_URL)
+                .baseUrl(BuildConfig.API_ENDPOINT)
                 .build();
         final VidmeApi videoApi = retrofitAdapter.create(VidmeApi.class);
         Call<Videos> call = videoApi.getNewVideo();
@@ -90,8 +90,8 @@ public class NewFragment extends Fragment {
                 newVideosAdapter.SetOnItemClickListener(new OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        String video_url = response.body().videos.get(position).getComplete_url();
-                        Intent intent = new Intent(getActivity(),Videoplayer.class);
+                        String video_url = response.body().videos.get(position).getFullUrl();
+                        Intent intent = new Intent(getActivity(),PlayerActivity.class);
                         intent.putExtra("video_url",video_url);
                         startActivity(intent);
                     }
