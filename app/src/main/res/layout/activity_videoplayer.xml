@@ -1,17 +1,16 @@
-<!--<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".screen.activity.PlayerActivity"
-    style="@style/AppTheme.NoActionBar">-->
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#000"
+    android:orientation="vertical">
 
-   <!-- <VideoView
-        android:layout_width="wrap_content"
+    <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+        android:id="@+id/videoView"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/video_view"
-        android:layout_centerInParent="true"/>-->
-    <com.afollestad.easyvideoplayer.EasyVideoPlayer xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/player"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true" />
+</RelativeLayout>

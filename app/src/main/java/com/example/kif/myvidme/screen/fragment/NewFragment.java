@@ -10,9 +10,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.kif.myvidme.BuildConfig;
+import com.example.kif.myvidme.InternetConnectivityUtil;
 import com.example.kif.myvidme.R;
+import com.example.kif.myvidme.api.ApiClient;
 import com.example.kif.myvidme.api.VidmeApi;
 import com.example.kif.myvidme.model.Video;
 import com.example.kif.myvidme.model.Videos;
@@ -38,11 +41,11 @@ public class NewFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_new, container, false);
         newVideosList = (RecyclerView) rootView.findViewById(R.id.new_List);
-       newVideosList.setHasFixedSize(true);
+        newVideosList.setHasFixedSize(true);
 
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
-        newVideosList.setLayoutManager(llm);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        newVideosList.setLayoutManager(linearLayoutManager);
 
         refreshNew = (SwipeRefreshLayout)rootView.findViewById(R.id.refresh_new);
         refreshNew.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -66,22 +69,22 @@ public class NewFragment extends Fragment {
             }
         });
 
+        if (!InternetConnectivityUtil.isConnected(getContext())){
+            Toast.makeText(getContext(), "Please check your internet connection", Toast.LENGTH_SHORT).show();
+        } else {
             try {
                 getVideos();
             } catch (IOException e) {
                 e.printStackTrace();
-
+            }
         }
 
         return rootView;
     }
     private void getVideos() throws IOException {
-        Retrofit retrofitAdapter = new Retrofit.Builder()
-                .addConverterFactory(GsonConverterFactory.create())
-                .baseUrl(BuildConfig.API_ENDPOINT)
-                .build();
-        final VidmeApi videoApi = retrofitAdapter.create(VidmeApi.class);
-        Call<Videos> call = videoApi.getNewVideo();
+        VidmeApi apiService =
+                ApiClient.getClient().create(VidmeApi.class);
+        Call<Videos> call = apiService.getNewVideo();
         call.enqueue(new Callback<Videos>() {
             @Override
             public void onResponse(Call<Videos> call, final Response<Videos> response) {
@@ -104,10 +107,6 @@ public class NewFragment extends Fragment {
             public void onFailure(Call<Videos> call, Throwable t) {
 
             }
-
-
         });
     }
-
-
 }

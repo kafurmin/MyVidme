@@ -90,6 +90,8 @@ public class FeedFragment extends Fragment {
     }
 
     private void getVideos() throws IOException {
+
+
         Retrofit retrofitAdapter = new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(BuildConfig.API_ENDPOINT)
