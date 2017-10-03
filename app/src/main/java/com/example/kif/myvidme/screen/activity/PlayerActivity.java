@@ -3,81 +3,96 @@ package com.example.kif.myvidme.screen.activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 
 import com.afollestad.easyvideoplayer.EasyVideoCallback;
 import com.afollestad.easyvideoplayer.EasyVideoPlayer;
 import com.example.kif.myvidme.R;
 
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.extractor.ExtractorsFactory;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.hls.DefaultHlsDataSourceFactory;
-import com.google.android.exoplayer2.source.hls.HlsDataSourceFactory;
-import com.google.android.exoplayer2.source.hls.HlsMediaSource;
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import com.google.android.exoplayer2.upstream.BandwidthMeter;
-import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
-
 /**
  * Created by Kif on 02.10.2017.
  */
 
-public class PlayerActivity extends AppCompatActivity {
-    private String videoPath = "http://devimages.apple.com/iphone/samples/bipbop/bipbopall.m3u8";
+public class PlayerActivity extends AppCompatActivity implements EasyVideoCallback {
 
-    SimpleExoPlayerView videoView;
+    private static final String TEST_URL = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
 
-    SimpleExoPlayer player;
+    private EasyVideoPlayer player;
 
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_videoplayer);
 
-        videoView = (SimpleExoPlayerView) findViewById(R.id.videoView);
         Intent intent = getIntent();
+        String videoUrl = intent.getExtras().getString("video_url");
 
-        videoPath = intent.getStringExtra("video_url");
 
-        playVideo();
-    }
+        // Grabs a reference to the player view
+        player = (EasyVideoPlayer) findViewById(R.id.player);
 
-    void playVideo() {
-        Handler mainHandler = new Handler();
-        BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
-        TrackSelection.Factory videoTrackSelectionFactory =
-                new AdaptiveTrackSelection.Factory(bandwidthMeter);
-        TrackSelector trackSelector =
-                new DefaultTrackSelector(videoTrackSelectionFactory);
+        // Sets the callback to this Activity, since it inherits EasyVideoCallback
+        player.setCallback(this);
 
-        player =
-                ExoPlayerFactory.newSimpleInstance(this, trackSelector);
+        // Sets the source to the HTTP URL held in the TEST_URL variable.
+        // To play files, you can use Uri.fromFile(new File("..."))
+        player.setSource(Uri.parse(videoUrl));
 
-        videoView.setPlayer(player);
-
-        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(this, Util.getUserAgent(this, "MyVidme"));
-        HlsDataSourceFactory hlsDataSourceFactory = new DefaultHlsDataSourceFactory(dataSourceFactory);
-        Handler handler = new Handler();
-        ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
-        MediaSource videoSource = new HlsMediaSource(Uri.parse(videoPath), hlsDataSourceFactory
-                , 1, null, null);
-        player.prepare(videoSource);
+        // From here, the player view will show a progress indicator until the player is prepared.
+        // Once it's prepared, the progress indicator goes away and the controls become enabled for the user to begin playback.
     }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
-        player.stop();
+        // Make sure the player stops playing if the user presses the home button.
+        player.pause();
+    }
+
+    // Methods for the implemented EasyVideoCallback
+
+    @Override
+    public void onPreparing(EasyVideoPlayer player) {
+        // TODO handle if needed
+    }
+
+    @Override
+    public void onPrepared(EasyVideoPlayer player) {
+        // TODO handle
+    }
+
+    @Override
+    public void onBuffering(int percent) {
+        // TODO handle if needed
+    }
+
+    @Override
+    public void onError(EasyVideoPlayer player, Exception e) {
+        // TODO handle
+    }
+
+    @Override
+    public void onCompletion(EasyVideoPlayer player) {
+        // TODO handle if needed
+    }
+
+    @Override
+    public void onRetry(EasyVideoPlayer player, Uri source) {
+        // TODO handle if used
+    }
+
+    @Override
+    public void onSubmit(EasyVideoPlayer player, Uri source) {
+        // TODO handle if used
+    }
+
+    @Override
+    public void onStarted(EasyVideoPlayer player) {
+        // TODO handle if needed
+    }
+
+    @Override
+    public void onPaused(EasyVideoPlayer player) {
+        // TODO handle if needed
     }
 }

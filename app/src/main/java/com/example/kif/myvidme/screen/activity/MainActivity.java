@@ -6,10 +6,9 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Window;
 import android.widget.Toast;
 
-import com.example.kif.myvidme.InternetConnectivityUtil;
+import com.example.kif.myvidme.screen.InternetConnectivityUtil;
 import com.example.kif.myvidme.R;
 import com.example.kif.myvidme.screen.adapter.SectionsPagerAdapter;
 

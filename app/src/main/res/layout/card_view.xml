@@ -4,13 +4,15 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/card_view"
     android:layout_width="match_parent"
+    card_view:cardUseCompatPadding="true"
     android:layout_height="210dp"
-    card_view:cardCornerRadius="4dp">
+    card_view:cardCornerRadius="8dp"
+    android:layout_marginBottom="8dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="210dp"
-        android:padding="5dp">
+        >
 
     <ImageView
         android:layout_width="match_parent"
@@ -22,11 +24,14 @@
     <TextView
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:id="@+id/Videoname_textView"
-        android:text="NameofVideo"
+        android:id="@+id/textViewTitle"
+        android:text="Title"
         android:layout_below="@id/thumb_view"
-        android:layout_marginTop="4dp"
-        android:maxLength="30">
+        android:maxLength="30"
+        android:textStyle="bold"
+        android:layout_marginLeft="10dp"
+        android:textColor="@color/cardview_dark_background"
+        >
     </TextView>
 
     <TextView
@@ -34,11 +39,10 @@
         android:layout_height="wrap_content"
         android:id="@+id/like_textview"
         android:text="Likes"
-        android:textColor="#363535"
-        android:layout_marginLeft="10dp"
+        android:textColor="@color/colorPrimaryDark"
+        android:layout_marginRight="15dp"
         android:layout_alignRight="@id/thumb_view"
-        android:layout_below="@id/thumb_view"
-        android:layout_marginTop="4dp" />
+        android:layout_below="@id/thumb_view" />
     </RelativeLayout>
 
 </android.support.v7.widget.CardView>

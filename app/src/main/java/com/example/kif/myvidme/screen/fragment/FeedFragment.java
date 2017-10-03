@@ -100,7 +100,7 @@ public class FeedFragment extends Fragment {
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("Pref",Context.MODE_PRIVATE);
         String token = sharedPreferences.getString("token",null);
         Log.d("token in user videos",token);
-        Call<Videos> call = videoApi.getFeedVideo(token);
+        Call<Videos> call = videoApi.getFeedVideo(0,10,token);
         call.enqueue(new Callback<Videos>() {
             @Override
             public void onResponse(Call<Videos> call, final Response<Videos> response) {

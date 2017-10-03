@@ -4,16 +4,11 @@ package com.example.kif.myvidme.api;
 import com.example.kif.myvidme.model.Response;
 import com.example.kif.myvidme.model.Videos;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
-import retrofit2.http.Header;
-import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
-import rx.Observable;
+
 
 
 public interface VidmeApi {

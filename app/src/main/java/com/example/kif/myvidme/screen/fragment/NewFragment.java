@@ -12,8 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.example.kif.myvidme.BuildConfig;
-import com.example.kif.myvidme.InternetConnectivityUtil;
+import com.example.kif.myvidme.screen.InternetConnectivityUtil;
 import com.example.kif.myvidme.R;
 import com.example.kif.myvidme.api.ApiClient;
 import com.example.kif.myvidme.api.VidmeApi;
@@ -28,8 +27,6 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class NewFragment extends Fragment {
@@ -84,7 +81,7 @@ public class NewFragment extends Fragment {
     private void getVideos() throws IOException {
         VidmeApi apiService =
                 ApiClient.getClient().create(VidmeApi.class);
-        Call<Videos> call = apiService.getNewVideo();
+        Call<Videos> call = apiService.getNewVideo(0,10);
         call.enqueue(new Callback<Videos>() {
             @Override
             public void onResponse(Call<Videos> call, final Response<Videos> response) {

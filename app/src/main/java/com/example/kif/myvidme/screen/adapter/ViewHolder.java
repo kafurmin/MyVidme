@@ -27,7 +27,7 @@ public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickL
         itemView.setOnClickListener(this);
         thumbview = itemView.findViewById(R.id.thumb_view);
         cardView = itemView.findViewById(R.id.card_view);
-        videoName = itemView.findViewById(R.id.Videoname_textView);
+        videoName = itemView.findViewById(R.id.textViewTitle);
         videoLikeCount = itemView.findViewById(R.id.like_textview);
     }
 

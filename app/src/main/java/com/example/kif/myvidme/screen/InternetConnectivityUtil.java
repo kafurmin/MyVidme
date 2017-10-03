@@ -1,4 +1,4 @@
-package com.example.kif.myvidme;
+package com.example.kif.myvidme.screen;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
