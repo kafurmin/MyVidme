@@ -32,21 +32,23 @@ import retrofit2.Response;
 
 
 public class FeaturedFragment extends Fragment  {
-    public RecyclerViewAdapter featuredVideosAdapter;
+    public RecyclerViewAdapter recyclerViewAdapter;
     public List<Video> videos;
-    public RecyclerView featuredVideoList;
+    public RecyclerView recyclerView;
     public SwipeRefreshLayout swipeRefreshLayout;
     public int offset;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_featured, container, false);
-        featuredVideoList = rootView.findViewById(R.id.cardList);
-
+        recyclerView = rootView.findViewById(R.id.cardList);
+        swipeRefreshLayout = rootView.findViewById(R.id.root_featured);
+        videos = new ArrayList<>();
+        recyclerViewAdapter = new RecyclerViewAdapter(videos);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
-        featuredVideoList.setLayoutManager(llm);
-
-        featuredVideoList.setOnScrollListener(new EndlessRecyclerViewScrollListener(llm) {
+        recyclerView.setLayoutManager(llm);
+        recyclerView.setAdapter(recyclerViewAdapter);
+        recyclerView.setOnScrollListener(new EndlessRecyclerViewScrollListener(llm) {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
                 try {
@@ -56,26 +58,6 @@ public class FeaturedFragment extends Fragment  {
                 }
             }
         });
-
-        swipeRefreshLayout = rootView.findViewById(R.id.refresh);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                try {
-                    if (!InternetConnectivityUtil.isConnected(getContext())){
-                        Toast.makeText(getContext(), "Please check your internet connection", Toast.LENGTH_SHORT).show();
-                    } else {
-                        videos.clear();
-                        getVideos();
-                        featuredVideoList.getAdapter().notifyDataSetChanged();
-                        swipeRefreshLayout.setRefreshing(false);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
 
         if (!InternetConnectivityUtil.isConnected(getContext())){
             Toast.makeText(getContext(), "Please check your internet connection", Toast.LENGTH_SHORT).show();
@@ -87,12 +69,24 @@ public class FeaturedFragment extends Fragment  {
             }
         }
 
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                try {
+                    if (!InternetConnectivityUtil.isConnected(getContext())){
+                        Toast.makeText(getContext(), "Please check your internet connection", Toast.LENGTH_SHORT).show();
+                    } else {
+                        videos.clear();
+                        getVideos();
+                        recyclerView.getAdapter().notifyDataSetChanged();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
         return rootView;
-    }
-
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
     }
 
     private void getVideos() throws IOException {
@@ -101,9 +95,8 @@ public class FeaturedFragment extends Fragment  {
         call.enqueue(new Callback<Videos>() {
             @Override
             public void onResponse(Call<Videos> call, final Response<Videos> response) {
-                videos = response.body().videos;
-                featuredVideosAdapter = new RecyclerViewAdapter(videos);
-                featuredVideosAdapter.SetOnItemClickListener(new OnItemClickListener() {
+                videos.addAll(response.body().getVideos());
+                recyclerViewAdapter.SetOnItemClickListener(new OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
                         String video_url = response.body().videos.get(position).getFullUrl();
@@ -113,7 +106,7 @@ public class FeaturedFragment extends Fragment  {
                     }
                 });
 
-                featuredVideoList.setAdapter(featuredVideosAdapter);
+                recyclerViewAdapter.update(videos);
                 offset += BuildConfig.VISIBLE_ITEMS;
 
             }

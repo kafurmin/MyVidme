@@ -24,7 +24,7 @@
     <TextView
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:id="@+id/textViewTitle"
+        android:id="@+id/video_name"
         android:text="Title"
         android:layout_below="@id/thumb_view"
         android:maxLength="30"
@@ -38,7 +38,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/like_textview"
+        android:id="@+id/video_likes"
         android:text="Likes"
         android:textColor="@color/colorPrimaryDark"
         android:layout_marginTop="5dp"

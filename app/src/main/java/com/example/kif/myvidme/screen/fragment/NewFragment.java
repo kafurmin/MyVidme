@@ -1,6 +1,5 @@
 package com.example.kif.myvidme.screen.fragment;
 
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.kif.myvidme.BuildConfig;
+import com.example.kif.myvidme.screen.EndlessRecyclerViewScrollListener;
 import com.example.kif.myvidme.screen.InternetConnectivityUtil;
 import com.example.kif.myvidme.R;
 import com.example.kif.myvidme.api.ApiClient;
@@ -22,6 +23,7 @@ import com.example.kif.myvidme.screen.adapter.RecyclerViewAdapter;
 import com.example.kif.myvidme.screen.activity.PlayerActivity;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -29,40 +31,31 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class NewFragment extends Fragment {
-    public RecyclerViewAdapter newVideosAdapter;
+public class NewFragment extends Fragment  {
+    public RecyclerViewAdapter recyclerViewAdapter;
     public List<Video> videos;
-    public SwipeRefreshLayout refreshNew;
-    public RecyclerView newVideosList;
+    public RecyclerView recyclerView;
+    public SwipeRefreshLayout swipeRefreshLayout;
+    public int offset;
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_new, container, false);
-        newVideosList = (RecyclerView) rootView.findViewById(R.id.new_List);
-        newVideosList.setHasFixedSize(true);
-
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        newVideosList.setLayoutManager(linearLayoutManager);
-
-        refreshNew = (SwipeRefreshLayout)rootView.findViewById(R.id.refresh_new);
-        refreshNew.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        View rootView = inflater.inflate(R.layout.fragment_featured, container, false);
+        recyclerView = rootView.findViewById(R.id.cardList);
+        swipeRefreshLayout = rootView.findViewById(R.id.root_featured);
+        videos = new ArrayList<>();
+        recyclerViewAdapter = new RecyclerViewAdapter(videos);
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(llm);
+        recyclerView.setAdapter(recyclerViewAdapter);
+        recyclerView.setOnScrollListener(new EndlessRecyclerViewScrollListener(llm) {
             @Override
-            public void onRefresh() {
+            public void onLoadMore(int page, int totalItemsCount) {
                 try {
-                    refreshItems();
+                    getVideos();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            }
-            public void refreshItems() throws IOException {
-                getVideos();
-                OnItemLoadComplete();
-            }
-            public void OnItemLoadComplete(){
-                newVideosAdapter.notifyDataSetChanged();
-                refreshNew.setRefreshing(false);
-
-
             }
         });
 
@@ -76,17 +69,34 @@ public class NewFragment extends Fragment {
             }
         }
 
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                try {
+                    if (!InternetConnectivityUtil.isConnected(getContext())){
+                        Toast.makeText(getContext(), "Please check your internet connection", Toast.LENGTH_SHORT).show();
+                    } else {
+                        videos.clear();
+                        getVideos();
+                        recyclerView.getAdapter().notifyDataSetChanged();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
         return rootView;
     }
+
     private void getVideos() throws IOException {
-        VidmeApi apiService =  ApiClient.getClient().create(VidmeApi.class);
-        Call<Videos> call = apiService.getNewVideo(0,10);
+        VidmeApi vidmeApi = ApiClient.getClient().create(VidmeApi.class);
+        Call<Videos> call = vidmeApi.getNewVideo(offset, BuildConfig.VISIBLE_ITEMS);
         call.enqueue(new Callback<Videos>() {
             @Override
             public void onResponse(Call<Videos> call, final Response<Videos> response) {
-                videos = response.body().videos;
-                newVideosAdapter = new RecyclerViewAdapter(videos);
-                newVideosAdapter.SetOnItemClickListener(new OnItemClickListener() {
+                videos.addAll(response.body().getVideos());
+                recyclerViewAdapter.SetOnItemClickListener(new OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
                         String video_url = response.body().videos.get(position).getFullUrl();
@@ -96,12 +106,14 @@ public class NewFragment extends Fragment {
                     }
                 });
 
-                newVideosList.setAdapter(newVideosAdapter);
+                recyclerViewAdapter.update(videos);
+                offset += BuildConfig.VISIBLE_ITEMS;
+
             }
 
             @Override
             public void onFailure(Call<Videos> call, Throwable t) {
-
+                //Toast.makeText(getContext(), "Oooops, smth goes wrong, try again laiter", Toast.LENGTH_SHORT).show();
             }
         });
     }

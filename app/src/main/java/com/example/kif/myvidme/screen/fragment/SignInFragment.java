@@ -56,6 +56,7 @@ public class SignInFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_signin, container, false);
 
+        setHasOptionsMenu(false);
      /*   SharedPreferences auth = getActivity().getSharedPreferences("Pref",Context.MODE_PRIVATE);
         SharedUsername = auth.getString("username",null);
         SharedPassword = auth.getString("password",null);
@@ -250,5 +251,4 @@ public class SignInFragment extends Fragment {
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
-
 }

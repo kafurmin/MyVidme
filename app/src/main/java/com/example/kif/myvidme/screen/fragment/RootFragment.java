@@ -19,13 +19,16 @@ public class RootFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_root, container, false);
 
-        SignInFragment signInFragment = new SignInFragment();
-
-        if(token == null) {
+        if(token!=null) {
+            FeedFragment feedFragment = FeedFragment.newInstance(token);
+            feedFragment.setTargetFragment(RootFragment.this, 1001);
+            getFragmentManager().beginTransaction().replace(R.id.root_frame, feedFragment).commit();
+        }else{
+            SignInFragment signInFragment = new SignInFragment();
             signInFragment.setTargetFragment(RootFragment.this, 1001);
-        }
+            getFragmentManager().beginTransaction().replace(R.id.root_frame, signInFragment).commit();
 
-        getFragmentManager().beginTransaction().replace(R.id.root_frame, (token == null? signInFragment: FeedFragment.newInstance(token))).commit();
+        }
 
 		return view;
     }
@@ -33,12 +36,7 @@ public class RootFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+          token = data.getStringExtra("token");
 
-        if(token!=null) {
-
-        }
-        else{
-            token = data.getStringExtra("token");
-        }
     }
 }
