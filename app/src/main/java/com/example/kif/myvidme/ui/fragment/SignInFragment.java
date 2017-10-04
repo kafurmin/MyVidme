@@ -21,6 +21,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +29,7 @@ import com.example.kif.myvidme.BuildConfig;
 import com.example.kif.myvidme.R;
 import com.example.kif.myvidme.model.Response;
 import com.example.kif.myvidme.api.VidmeApi;
+import com.example.kif.myvidme.screen.activity.MainActivity;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -51,6 +53,7 @@ public class SignInFragment extends Fragment {
     public String SharedPassword;
     public Call<Response> call;
     public String token;
+    public static ImageButton imageButton;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -135,7 +138,7 @@ public class SignInFragment extends Fragment {
                         FeedFragment feedFragment = FeedFragment.newInstance(token);
 
                         getFragmentManager().beginTransaction().replace(R.id.signin_root, feedFragment).commitNow();
-
+                        MainActivity.imageButton.setVisibility(View.VISIBLE);
                     }
             }
             @Override

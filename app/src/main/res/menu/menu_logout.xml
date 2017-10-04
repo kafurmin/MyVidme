@@ -1,8 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
-<item
-    android:title="Log Out"
-    android:id="@+id/LogOut_button"
-    />
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:sabd="http://schemas.android.com/apk/res-auto" >
+
+    <item
+        android:id="@+id/LogOut_button"
+        android:icon="@drawable/ic_more_vert_black_24dp"
+        android:orderInCategory="100"
+        android:title="log_out"
+        sabd:showAsAction="ifRoom"/>
+
 </menu>

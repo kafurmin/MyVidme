@@ -48,7 +48,6 @@ public class FeedFragment extends Fragment  {
         Bundle args = new Bundle();
         args.putString("token", mParam1);
         fragment.setArguments(args);
-
         return fragment;
     }
 
@@ -56,10 +55,9 @@ public class FeedFragment extends Fragment  {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            setHasOptionsMenu(true);
             token = getArguments().getString("token");
-
             Intent i = new Intent().putExtra("token", token);
-
             Fragment targetFragment = getTargetFragment();
             if (targetFragment != null) {
                 targetFragment.onActivityResult(1001, 1, i);
@@ -149,36 +147,22 @@ public class FeedFragment extends Fragment  {
         });
     }
 
-
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-
-        inflater.inflate(R.menu.menu_logout,menu);
         super.onCreateOptionsMenu(menu, inflater);
+        MenuItem someMenuItem = menu.findItem(R.id.log_out_button);
+        someMenuItem.setVisible(true);
+        inflater.inflate(R.menu.menu_logout, menu);
+
     }
+
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.LogOut_button:
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
 
-                token = null;
-
-                Intent i = new Intent().putExtra("token", token);
-
-                Fragment targetFragment = getTargetFragment();
-                if (targetFragment != null) {
-                    targetFragment.onActivityResult(1001, 1, i);
-                }
-
-                getFragmentManager().beginTransaction().replace(R.id.root_feed, new SignInFragment()).commitNowAllowingStateLoss();
-
-                item.setVisible(false);
-
-                break;
-
-        }
-        return true;
-
+        // This does work
+        MenuItem someMenuItem = menu.findItem(R.id.log_out_button);
+        someMenuItem.setVisible(true);
     }
 }
 

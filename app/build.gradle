@@ -19,6 +19,7 @@ android {
         buildConfigField "String", "CLIENT_SECRET", '"aF5M091xe9ImwTTEDzdOsW6awq1jvHtUyLWSJpcy"'
         buildConfigField "int", "VISIBLE_ITEMS", '10'
 
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
@@ -55,5 +56,6 @@ dependencies {
     compile 'com.github.omadahealth:swipy:1.2.3@aar'
     compile 'com.squareup.picasso:picasso:2.4.0'
     compile 'com.afollestad:easyvideoplayer:0.3.0'
+    compile 'com.android.support:support-vector-drawable:26.+'
     testCompile 'junit:junit:4.12'
 }
