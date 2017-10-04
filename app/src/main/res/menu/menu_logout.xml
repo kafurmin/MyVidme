@@ -2,8 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
 <item
-
-    android:title="LogOut"
+    android:title="Log Out"
     android:id="@+id/LogOut_button"
     />
 </menu>

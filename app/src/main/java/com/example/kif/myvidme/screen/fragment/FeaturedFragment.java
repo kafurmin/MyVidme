@@ -46,7 +46,6 @@ public class FeaturedFragment extends Fragment  {
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         featuredVideoList.setLayoutManager(llm);
 
-
         featuredVideoList.setOnScrollListener(new EndlessRecyclerViewScrollListener(llm) {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {

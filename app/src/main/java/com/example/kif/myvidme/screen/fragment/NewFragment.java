@@ -79,8 +79,7 @@ public class NewFragment extends Fragment {
         return rootView;
     }
     private void getVideos() throws IOException {
-        VidmeApi apiService =
-                ApiClient.getClient().create(VidmeApi.class);
+        VidmeApi apiService =  ApiClient.getClient().create(VidmeApi.class);
         Call<Videos> call = apiService.getNewVideo(0,10);
         call.enqueue(new Callback<Videos>() {
             @Override

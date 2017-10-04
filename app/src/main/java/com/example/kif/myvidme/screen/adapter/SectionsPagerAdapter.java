@@ -4,7 +4,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.example.kif.myvidme.screen.activity.MainActivity;
 import com.example.kif.myvidme.screen.fragment.FeaturedFragment;
+import com.example.kif.myvidme.screen.fragment.FeedFragment;
+import com.example.kif.myvidme.screen.fragment.RootFragment;
 import com.example.kif.myvidme.screen.fragment.SignInFragment;
 import com.example.kif.myvidme.screen.fragment.NewFragment;
 
@@ -23,8 +26,8 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
             case 1:
                 return new NewFragment();
             case 2:
+                return new RootFragment();
 
-                return new SignInFragment();
         }
          return null;
     }

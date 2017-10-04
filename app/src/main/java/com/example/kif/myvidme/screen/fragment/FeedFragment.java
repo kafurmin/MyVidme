@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.transition.Visibility;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,15 +18,16 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.kif.myvidme.BuildConfig;
 import com.example.kif.myvidme.R;
 import com.example.kif.myvidme.api.VidmeApi;
 import com.example.kif.myvidme.model.Video;
 import com.example.kif.myvidme.model.Videos;
-import com.example.kif.myvidme.screen.activity.MainActivity;
 import com.example.kif.myvidme.screen.adapter.RecyclerViewAdapter;
 import com.example.kif.myvidme.screen.activity.PlayerActivity;
+import com.example.kif.myvidme.screen.adapter.SectionsPagerAdapter;
 
 import java.io.IOException;
 import java.util.List;
@@ -41,13 +44,32 @@ public class FeedFragment extends Fragment {
     public List<Video> videos;
     public RecyclerView userVideosList;
     public SwipeRefreshLayout swipeRefreshLayout;
+    public String token;
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public static FeedFragment newInstance(String mParam1) {
+        FeedFragment fragment = new FeedFragment();
+        Bundle args = new Bundle();
+        args.putString("token", mParam1);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            token = getArguments().getString("token");
+            }
+    }
+
+    public FeedFragment() {
+    }
+
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_feed, container, false);
-        userVideosList = (RecyclerView) rootView.findViewById(R.id.user_videos_list);
+        userVideosList = rootView.findViewById(R.id.user_videos_list);
         setHasOptionsMenu(true);
-        swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.user_videos_refresh);
+        swipeRefreshLayout = rootView.findViewById(R.id.user_videos_refresh);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -84,11 +106,6 @@ public class FeedFragment extends Fragment {
         return rootView;
     }
 
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-    }
-
     private void getVideos() throws IOException {
 
 
@@ -97,8 +114,8 @@ public class FeedFragment extends Fragment {
                 .baseUrl(BuildConfig.API_ENDPOINT)
                 .build();
         final VidmeApi videoApi = retrofitAdapter.create(VidmeApi.class);
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("Pref",Context.MODE_PRIVATE);
-        String token = sharedPreferences.getString("token",null);
+        //SharedPreferences sharedPreferences = getActivity().getSharedPreferences("Pref",Context.MODE_PRIVATE);
+        //token = sharedPreferences.getString("token",null);
         Log.d("token in user videos",token);
         Call<Videos> call = videoApi.getFeedVideo(0,10,token);
         call.enqueue(new Callback<Videos>() {
@@ -123,10 +140,7 @@ public class FeedFragment extends Fragment {
 
             @Override
             public void onFailure(Call<Videos> call, Throwable t) {
-
             }
-
-
         });
     }
 
@@ -140,13 +154,23 @@ public class FeedFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.LogOut_button:
-                SharedPreferences failPreferences = getActivity().getSharedPreferences("Pref",Context.MODE_PRIVATE);
-                SharedPreferences.Editor edit = failPreferences.edit();
-                edit.putString("username",null);
-                edit.putString("password",null);
-                edit.commit();
-                Intent logout = new Intent(getActivity(),MainActivity.class);
-                startActivity(logout);
+                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("Pref",Context.MODE_PRIVATE);
+                SharedPreferences.Editor edit = sharedPreferences.edit();
+                edit.clear();
+                edit.apply();
+
+                getFragmentManager().popBackStackImmediate();
+
+                //.notifyDataSetChanged();/*
+                FragmentTransaction trans = getFragmentManager()
+                        .beginTransaction();
+
+                trans.detach(this);
+                trans.commitNow();
+
+                item.setVisible(false);
+
+
                 break;
 
         }

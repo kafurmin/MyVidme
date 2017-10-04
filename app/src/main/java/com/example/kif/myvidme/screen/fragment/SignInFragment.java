@@ -3,24 +3,14 @@ package com.example.kif.myvidme.screen.fragment;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.app.LoaderManager;
+
 import android.content.Context;
-import android.content.CursorLoader;
-import android.content.DialogInterface;
-import android.content.Loader;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -28,31 +18,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.kif.myvidme.BuildConfig;
 import com.example.kif.myvidme.R;
 import com.example.kif.myvidme.model.Response;
 import com.example.kif.myvidme.api.VidmeApi;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static android.Manifest.permission.READ_CONTACTS;
 
 
 public class SignInFragment extends Fragment {
-    private static final int REQUEST_READ_CONTACTS = 0;
 
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
@@ -63,19 +47,19 @@ public class SignInFragment extends Fragment {
     public String sharedPreferencesPassword;
     public String usernameValue;
     public String passwordValue;
-    public String inSharedPreferenceUsername;
-    public String inSharedPreferencePassword;
+    public String SharedUsername;
+    public String SharedPassword;
     public Call<Response> call;
+    public String token;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_signin, container, false);
 
-
-        SharedPreferences auth = getActivity().getSharedPreferences("Pref",Context.MODE_PRIVATE);
-        inSharedPreferenceUsername = auth.getString("username",null);
-        inSharedPreferencePassword = auth.getString("password",null);
-
+     /*   SharedPreferences auth = getActivity().getSharedPreferences("Pref",Context.MODE_PRIVATE);
+        SharedUsername = auth.getString("username",null);
+        SharedPassword = auth.getString("password",null);
+*/
         mEmailView = (AutoCompleteTextView) rootView.findViewById(R.id.username);
 
         mPasswordView = (EditText) rootView.findViewById(R.id.password);
@@ -121,11 +105,11 @@ public class SignInFragment extends Fragment {
          passwordValue = mPasswordView.getText().toString();
 
 
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("Pref",Context.MODE_PRIVATE);
+   /*     SharedPreferences sharedPreferences = getActivity().getSharedPreferences("Pref",Context.MODE_PRIVATE);
         sharedPreferencesUsername = sharedPreferences.getString("username",null);
         sharedPreferencesPassword = sharedPreferences.getString("password",null);
         Log.d("Shared preference", sharedPreferencesUsername + sharedPreferencesPassword);
-
+*/
         if(sharedPreferencesUsername ==null || sharedPreferencesPassword ==null) {
             call = vidmeApi.authCreate(usernameValue, passwordValue);
         }
@@ -136,59 +120,50 @@ public class SignInFragment extends Fragment {
             @Override
             public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
                 showProgress(false);
-                if(response.body()==null){
-                    buildDialog(getActivity()).show();
-                    SharedPreferences failConnectionValues = getActivity().getSharedPreferences("Pref",Context.MODE_PRIVATE);
-                    SharedPreferences.Editor edit = failConnectionValues.edit();
-                    edit.putString("username",null);
-                    edit.putString("password",null);
-                    edit.commit();
-                }
-                else {
                     if (response.body().getStatus()) {
-                        SharedPreferences sharedPreferences1 = getActivity().getSharedPreferences("Pref",Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences1.edit();
-                        editor.putString("token", response.body().getAuth().getToken());
-                        editor.putString("username", usernameValue);
-                        editor.putString("password", passwordValue);
-                        editor.commit();
 
-                        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                        FeedFragment feedFragment = new FeedFragment();
-                        fragmentTransaction.replace(R.id.signin_root,feedFragment);
-                        fragmentTransaction.commit();
-/*
-                        Intent feed_intent = new Intent(getActivity(), Feed.class);
-                        startActivity(feed_intent);*/
+                        token = response.body().getAuth().getToken();
+
+                        Intent i = new Intent().putExtra("token", token);
+
+                        Fragment targetFragment = getTargetFragment();
+                        if (targetFragment != null) {
+                            targetFragment.onActivityResult(1001, 1, i);
+                        }
+
+                        FeedFragment feedFragment = FeedFragment.newInstance(token);
+
+                        getFragmentManager().beginTransaction().replace(R.id.signin_root, feedFragment).commitNow();
+
                     }
-                }
             }
-
             @Override
             public void onFailure(Call<Response> call, Throwable t) {
 
                 call.cancel();
-                buildDialog(getActivity());
             }
         });
     }
-
-    public AlertDialog.Builder buildDialog(Context c) {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(c);
-        builder.setTitle("Invalid password ");
-        builder.setMessage("The password you entered was not valid");
-        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                dialog.dismiss();
-            }
-        });
-
-        return builder;
+    /*@Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+       Fragment parent = getParentFragment();
+        if (parent != null) {
+            parent.onActivityResult(1001, 1, new Intent().putExtra("token",token));
+        }
     }
+    */
+
+
+/*
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Fragment target = getTargetFragment();
+        if(target!=null){
+            target.onActivityResult(getTargetRequestCode(),1, new Intent("token"));
+        }
+    }*/
+
 
     private void attemptLogin() {
 
@@ -276,124 +251,4 @@ public class SignInFragment extends Fragment {
         }
     }
 
-
 }
-/*
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return new CursorLoader(this,
-                // Retrieve data rows for the device user's 'profile' contact.
-                Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI,
-                        ContactsContract.Contacts.Data.CONTENT_DIRECTORY), ProfileQuery.PROJECTION,
-
-                // Select only email addresses.
-                ContactsContract.Contacts.Data.MIMETYPE +
-                        " = ?", new String[]{ContactsContract.CommonDataKinds.Email
-                .CONTENT_ITEM_TYPE},
-
-                // Show primary email addresses first. Note that there won't be
-                // a primary email address if the user hasn't specified one.
-                ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        List<String> emails = new ArrayList<>();
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            emails.add(cursor.getString(ProfileQuery.ADDRESS));
-            cursor.moveToNext();
-        }
-
-        addEmailsToAutoComplete(emails);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
-    }
-
-    private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
-        //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(LoginActivity.this,
-                        android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
-
-        mEmailView.setAdapter(adapter);
-    }
-
-
-private interface ProfileQuery {
-    String[] PROJECTION = {
-            ContactsContract.CommonDataKinds.Email.ADDRESS,
-            ContactsContract.CommonDataKinds.Email.IS_PRIMARY,
-    };
-
-    int ADDRESS = 0;
-    int IS_PRIMARY = 1;
-}
-
-*/
-/**
- * Represents an asynchronous login/registration task used to authenticate
- * the user.
- *//*
-
-public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
-
-    private final String mEmail;
-    private final String mPassword;
-
-    UserLoginTask(String email, String password) {
-        mEmail = email;
-        mPassword = password;
-    }
-
-    @Override
-    protected Boolean doInBackground(Void... params) {
-        // TODO: attempt authentication against a network service.
-
-        try {
-            // Simulate network access.
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            return false;
-        }
-
-        for (String credential : DUMMY_CREDENTIALS) {
-            String[] pieces = credential.split(":");
-            if (pieces[0].equals(mEmail)) {
-                // Account exists, return true if the password matches.
-                return pieces[1].equals(mPassword);
-            }
-        }
-
-        // TODO: register the new account here.
-        return true;
-    }
-
-    @Override
-    protected void onPostExecute(final Boolean success) {
-        mAuthTask = null;
-        showProgress(false);
-
-        if (success) {
-            finish();
-        } else {
-            mPasswordView.setError(getString(R.string.error_incorrect_password));
-            mPasswordView.requestFocus();
-        }
-    }
-
-    @Override
-    protected void onCancelled() {
-        mAuthTask = null;
-        showProgress(false);
-    }
-}
-}
-
-
-
-*/

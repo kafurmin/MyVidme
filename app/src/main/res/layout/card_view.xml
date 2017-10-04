@@ -29,6 +29,7 @@
         android:layout_below="@id/thumb_view"
         android:maxLength="30"
         android:textStyle="bold"
+        android:layout_marginTop="5dp"
         android:layout_marginLeft="10dp"
         android:textColor="@color/cardview_dark_background"
         >
@@ -40,6 +41,7 @@
         android:id="@+id/like_textview"
         android:text="Likes"
         android:textColor="@color/colorPrimaryDark"
+        android:layout_marginTop="5dp"
         android:layout_marginRight="15dp"
         android:layout_alignRight="@id/thumb_view"
         android:layout_below="@id/thumb_view" />
