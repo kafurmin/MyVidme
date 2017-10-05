@@ -1,4 +1,4 @@
-package com.example.kif.myvidme.screen.activity;
+package com.example.kif.myvidme.ui.activity;
 
 import android.content.Intent;
 import android.net.Uri;

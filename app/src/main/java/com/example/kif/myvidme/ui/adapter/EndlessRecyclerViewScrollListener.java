@@ -1,4 +1,4 @@
-package com.example.kif.myvidme.screen;
+package com.example.kif.myvidme.ui.adapter;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;

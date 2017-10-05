@@ -7,6 +7,6 @@
         android:icon="@drawable/ic_more_vert_black_24dp"
         android:orderInCategory="100"
         android:title="log_out"
-        sabd:showAsAction="ifRoom"/>
+        sabd:showAsAction="always"/>
 
 </menu>

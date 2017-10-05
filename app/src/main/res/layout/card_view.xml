@@ -6,8 +6,8 @@
     android:layout_width="match_parent"
     card_view:cardUseCompatPadding="true"
     android:layout_height="210dp"
-    card_view:cardCornerRadius="8dp"
-    android:layout_marginBottom="8dp">
+    card_view:cardCornerRadius="@dimen/evp_content_inset_half"
+    android:layout_marginBottom="@dimen/margin_small">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -29,8 +29,8 @@
         android:layout_below="@id/thumb_view"
         android:maxLength="30"
         android:textStyle="bold"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="10dp"
+        android:layout_marginTop="@dimen/margin_6"
+        android:layout_marginLeft="@dimen/margin_10"
         android:textColor="@color/cardview_dark_background"
         >
     </TextView>
@@ -41,8 +41,8 @@
         android:id="@+id/video_likes"
         android:text="Likes"
         android:textColor="@color/colorPrimaryDark"
-        android:layout_marginTop="5dp"
-        android:layout_marginRight="15dp"
+        android:layout_marginTop="@dimen/margin_6"
+        android:layout_marginRight="@dimen/margin_medium"
         android:layout_alignRight="@id/thumb_view"
         android:layout_below="@id/thumb_view" />
     </RelativeLayout>

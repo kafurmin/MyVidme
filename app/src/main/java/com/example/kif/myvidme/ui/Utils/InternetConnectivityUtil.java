@@ -1,9 +1,8 @@
-package com.example.kif.myvidme.screen;
+package com.example.kif.myvidme.ui.Utils;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-
 
 public class InternetConnectivityUtil {
 

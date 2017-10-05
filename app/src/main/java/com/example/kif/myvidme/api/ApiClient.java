@@ -1,11 +1,9 @@
 package com.example.kif.myvidme.api;
 
 
-import android.support.annotation.NonNull;
 
 import com.example.kif.myvidme.BuildConfig;
 
-import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -15,43 +13,16 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient {
 
-    private static Retrofit retrofit = null;
+    private static VidmeApi retrofit;
 
-    private static OkHttpClient sClient;
-
-    private ApiClient() {
-    }
-
-    public static Retrofit getClient() {
+    public static VidmeApi getClient() {
         if (retrofit==null) {
-            retrofit = new Retrofit.Builder()
+           Retrofit retrofit_build = new Retrofit.Builder()
                     .baseUrl(BuildConfig.API_ENDPOINT)
-                  //  .client(getApiClient())
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
+            retrofit = retrofit_build.create(VidmeApi.class);
         }
         return retrofit;
-    }
-
-
-    @NonNull
-    private static OkHttpClient getApiClient() {
-        OkHttpClient client = sClient;
-        if (client == null) {
-            synchronized (ApiClient.class) {
-                client = sClient;
-                if (client == null) {
-                    client = sClient = buildApiClient();
-                }
-            }
-        }
-        return client;
-    }
-
-    @NonNull
-    private static OkHttpClient buildApiClient() {
-        return new OkHttpClient.Builder()
-                .addInterceptor(ApiKeyInterceptor.create())
-                .build();
     }
 }

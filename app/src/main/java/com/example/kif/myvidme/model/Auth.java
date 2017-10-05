@@ -21,40 +21,7 @@ public class Auth {
 
 
     public String getToken() {
-
         return token;
     }
 
-    public void setToken(String token) {
-
-        this.token = token;
-    }
-
-    public String getExpires() {
-
-        return expires;
-    }
-
-    public void setExpires(String expires) {
-
-        this.expires = expires;
-    }
-
-    public String getUser_id() {
-
-        return user_id;
-    }
-
-    public void setUser_id(String user_id) {
-
-        this.user_id = user_id;
-    }
-
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
 }

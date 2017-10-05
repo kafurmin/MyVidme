@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.example.kif.myvidme.screen.activity.MainActivity">
+    tools:context="com.example.kif.myvidme.ui.activity.MainActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
@@ -25,17 +25,8 @@
                 android:id="@+id/tabs"
                 android:layout_weight="1"
                 android:layout_width="0dp"
+                app:tabGravity="fill"
                 android:layout_height="wrap_content" />
-
-            <ImageButton
-                android:id="@+id/log_out_button"
-                android:layout_width="36dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:background="@null"
-                android:clickable="true"
-                android:src="@drawable/ic_more_vert_black_24dp"
-                android:visibility="gone" />
 
         </LinearLayout>
 
